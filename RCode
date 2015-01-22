@@ -1,0 +1,16 @@
+#Evolution of molt strategies in birds#
+
+require(phytools)
+
+#load trees#
+
+genomeTree<-read.nexus("~/Desktop/MoltStrategyEvolution/genome_tree.tre") #load genome tree# 
+
+hackettTree<-read.nexus("~/Desktop/MoltStrategyEvolution/ultrametric_Hackett_etal_100mya.tre") #load Hackett tree#
+
+genomeTips<-genomeTree$tip.label #generate lists of tip labels
+hackettTips<-hackettTree$.tip.label
+
+#export the tip labels to csv files to make matrix of molt states
+write.csv(genomeTips,"~/Desktop/MoltStrategyEvolution/genomeTips.csv")
+write.csv(hackettTips,"~/Desktop/MoltStrategyEvolution/HackettTips.csv")

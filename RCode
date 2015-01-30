@@ -14,3 +14,88 @@ hackettTips<-hackettTree$.tip.label
 #export the tip labels to csv files to make matrix of molt states
 write.csv(genomeTips,"~/Desktop/MoltStrategyEvolution/genomeTips.csv")
 write.csv(hackettTips,"~/Desktop/MoltStrategyEvolution/HackettTips.csv")
+
+
+#import character states
+matrix<-read.csv("~/Desktop/MoltStrategyEvolution/HackettTips.csv")
+
+#make three copies of trees to be differentially pruned for missing data
+treePF<-hackettTree
+treePA<-hackettTree
+treeStaffel<-hackettTree
+treeSimul<-hackettTree
+
+#make vectors for each variable with missing data
+PFmissing<-as.vector(matrix$Species[matrix$PF=="-"])
+PAmissing<-as.vector(matrix$Species[matrix$PA=="-"])
+Staffelmissing<-as.vector(matrix$Species[matrix$Staffel=="-"])
+Simulmissing<-as.vector(matrix$Species[matrix$Simul=="-"])
+
+#prune each tree by missing data
+treePF<-drop.tip(treePF,PFmissing)
+treePA<-drop.tip(treePA,PAmissing)
+treeStaffel<-drop.tip(treeStaffel,Staffelmissing)
+treeSimul<-drop.tip(treeSimul,Simulmissing)
+
+#make pruned vectors for the trees
+PF<-(matrix$PF)
+PF<-as.vector(PF)
+names(PF)<-matrix$Species
+PF<-(PF[PF!="-"])
+
+
+PA<-(matrix$PA)
+PA<-as.vector(PA)
+names(PA)<-matrix$Species
+PA<-(PA[PA!="-"])
+
+
+
+Staffel<-(matrix$Staffel)
+Staffel<-as.vector(Staffel)
+names(Staffel)<-matrix$Species
+Staffel<-(Staffel[Staffel!="-"])
+
+Simul<-(matrix$Simul)
+Simul<-as.vector(Simul)
+names(Simul)<-matrix$Species
+Simul<-(Simul[Simul!="-"])
+
+
+
+###use stochastic character mapping to estimat posterior probability of states along the branch with 100 trees###
+PF.simmap<-make.simmap(treePF,PF,nsim=100) 
+PA.simmap<-make.simmap(treePA,PA,nsim=100)
+Staffel.simmap<-make.simmap(treeStaffel,Staffel,nsim=100)
+Simul.simmap<-make.simmap(treeSimul,Simul,nsim=100)
+
+
+
+#make a densityMap object
+PFDensityMap<-densityMap(PF.simmap,plot=FALSE)
+PADensityMap<-densityMap(PA.simmap,plot=FALSE)
+StaffelDensityMap<-densityMap(Staffel.simmap,plot=FALSE)
+SimulDensityMap<-densityMap(Simul.simmap,plot=FALSE)
+
+#set the DensityMap function to grayscale colors
+n<-length(PFDensityMap$cols)
+PFDensityMap$cols[1:n]<-rev(grey(0:(n-1)/(n-1)))
+PADensityMap$cols[1:n]<-rev(grey(0:(n-1)/(n-1)))
+StaffelDensityMap$cols[1:n]<-rev(grey(0:(n-1)/(n-1)))
+SimulDensityMap$cols[1:n]<-rev(grey(0:(n-1)/(n-1)))
+
+#plot the density map
+plot(PFDensityMap,fsize=0.4,outline=T)
+#default res is 100 
+
+#write the plot to a pdf - note some changes to the plot to look better as pdf
+pdf(file="~/Desktop/MoltStrategyEvolution/PFStochmap.pdf")
+plot(PFDensityMap,fsize=0.4,outline=T,lwd=2)
+text(100,-8,"Preformative Molt")
+plot(PADensityMap,fsize=0.4,outline=T,lwd=2)
+text(100,-8,"Prealternate Molt")
+plot(StaffelDensityMap,fsize=0.4,outline=T,lwd=2)
+text(100,-8,"Staffelmauser")
+plot(StaffelDensityMap,fsize=0.4,outline=T,lwd=2)
+text(100,-8,"Simultaneous Wing Molt")
+dev.off()

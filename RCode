@@ -19,7 +19,7 @@ write.csv(hackettTips,"~/Desktop/MoltStrategyEvolution/HackettTips.csv")
 #import character states
 matrix<-read.csv("~/Desktop/MoltStrategyEvolution/HackettTips.csv")
 
-#make three copies of trees to be differentially pruned for missing data
+#make four copies of trees to be differentially pruned for missing data
 treePF<-hackettTree
 treePA<-hackettTree
 treeStaffel<-hackettTree

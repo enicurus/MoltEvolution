@@ -89,6 +89,7 @@ plot(PFDensityMap,fsize=0.4,outline=T)
 #default res is 100 
 
 #write the plot to a pdf - note some changes to the plot to look better as pdf
+#Note that at this point (29 Jan) Simultaneous plots as Staffel
 pdf(file="~/Desktop/MoltStrategyEvolution/PFStochmap.pdf")
 plot(PFDensityMap,fsize=0.4,outline=T,lwd=2)
 text(100,-8,"Preformative Molt")

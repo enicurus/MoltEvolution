@@ -19,7 +19,7 @@ write.csv(hackettTips,"~/Desktop/MoltStrategyEvolution/HackettTips.csv")
 #import character states
 matrix<-read.csv("~/Desktop/MoltStrategyEvolution/HackettTips.csv")
 
-#make four copies of trees to be differentially pruned for missing data
+#make three copies of trees to be differentially pruned for missing data
 treePF<-hackettTree
 treePA<-hackettTree
 treeStaffel<-hackettTree
@@ -64,7 +64,7 @@ Simul<-(Simul[Simul!="-"])
 
 
 ###use stochastic character mapping to estimat posterior probability of states along the branch with 100 trees###
-PF.simmap<-make.simmap(treePF,PF,nsim=100) 
+PF.simmap<-make.simmap(treePF,PF,nsim=1000) 
 PA.simmap<-make.simmap(treePA,PA,nsim=100)
 Staffel.simmap<-make.simmap(treeStaffel,Staffel,nsim=100)
 Simul.simmap<-make.simmap(treeSimul,Simul,nsim=100)
@@ -75,7 +75,7 @@ Simul.simmap<-make.simmap(treeSimul,Simul,nsim=100)
 PFDensityMap<-densityMap(PF.simmap,plot=FALSE)
 PADensityMap<-densityMap(PA.simmap,plot=FALSE)
 StaffelDensityMap<-densityMap(Staffel.simmap,plot=FALSE)
-SimulDensityMap<-densityMap(Simul.simmap,plot=FALSE)
+SimulDensityMap<-densityMap(Simul.simmap,plot=F)
 
 #set the DensityMap function to grayscale colors
 n<-length(PFDensityMap$cols)
@@ -89,7 +89,6 @@ plot(PFDensityMap,fsize=0.4,outline=T)
 #default res is 100 
 
 #write the plot to a pdf - note some changes to the plot to look better as pdf
-#Note that at this point (29 Jan) Simultaneous plots as Staffel
 pdf(file="~/Desktop/MoltStrategyEvolution/PFStochmap.pdf")
 plot(PFDensityMap,fsize=0.4,outline=T,lwd=2)
 text(100,-8,"Preformative Molt")
@@ -97,6 +96,46 @@ plot(PADensityMap,fsize=0.4,outline=T,lwd=2)
 text(100,-8,"Prealternate Molt")
 plot(StaffelDensityMap,fsize=0.4,outline=T,lwd=2)
 text(100,-8,"Staffelmauser")
-plot(StaffelDensityMap,fsize=0.4,outline=T,lwd=2)
+plot(SimulDensityMap,fsize=0.4,outline=T,lwd=2)
 text(100,-8,"Simultaneous Wing Molt")
+dev.off()
+
+#plot transitions
+library(ggplot2)
+library(reshape)
+describePFmap<-describe.simmap(PF.simmap)
+PFtrans<-data.frame(describePFmap$count)
+pftrans.melt<-melt(PFtrans)
+PFtrans.melt<-pftrans.melt[1001:3000,]
+
+describePAmap<-describe.simmap(PA.simmap)
+PAtrans<-data.frame(describePAmap$count)
+patrans.melt<-melt(PAtrans)
+PAtrans.melt<-patrans.melt[101:300,]
+
+describeStaffelmap<-describe.simmap(Staffel.simmap)
+Staffeltrans<-data.frame(describeStaffelmap$count)
+Staffeltrans.melt<-melt(Staffeltrans)
+Staffeltrans.melt<-Staffeltrans.melt[101:300,]
+
+describeSimulmap<-describe.simmap(Simul.simmap)
+Simultrans<-data.frame(describeSimulmap$count)
+Simultrans.melt<-melt(Simultrans)
+Simultrans.melt<-Simultrans.melt[101:300,]
+
+
+pdf(file="~/Desktop/MoltStrategyEvolution/PFtransitions.pdf")
+ggplot(PFtrans.melt,aes(value,fill=variable))+geom_histogram(binwidth=1,alpha=0.5,position="identity")+theme_bw()+labs(x = "Estimated number of transitions", y = "Number of posterior trees")+scale_fill_discrete(labels=c("gains of PF","Losses of PF"))
+write.quartz("~/Desktop/MoltStrategyEvolution/PFtransitions.png")
+
+ggplot(PAtrans.melt,aes(value,fill=variable))+geom_histogram(binwidth=1,alpha=0.5,position="identity")+theme_bw()+labs(x = "Estimated number of transitions", y = "Number of posterior trees")+scale_fill_discrete(labels=c("gains of PA","Losses of PA"))
+write.quartz("~/Desktop/MoltStrategyEvolution/PAtransitions.png")
+
+ggplot(Staffeltrans.melt,aes(value,fill=variable))+geom_histogram(binwidth=1,alpha=0.5,position="identity")+theme_bw()+labs(x = "Estimated number of transitions", y = "Number of posterior trees")+scale_fill_discrete(labels=c("gains of Staffelmauser","Losses of Staffelmauser"))
+write.quartz("~/Desktop/MoltStrategyEvolution/Staffeltransitions.png")
+
+ggplot(Simultrans.melt,aes(value,fill=variable))+geom_histogram(binwidth=1,alpha=0.5,position="identity")+theme_bw()+labs(x = "Estimated number of transitions", y = "Number of posterior trees")+scale_fill_discrete(labels=c("gains of Simultaneous pp molt","Losses of Simultaneous pp molt"))
+
+write.quartz("~/Desktop/MoltStrategyEvolution/PFtransitions.png")
+
 dev.off()

@@ -139,3 +139,21 @@ ggplot(Simultrans.melt,aes(value,fill=variable))+geom_histogram(binwidth=1,alpha
 write.quartz("~/Desktop/MoltStrategyEvolution/PFtransitions.png")
 
 dev.off()
+
+
+#Ancestral state reconstruction:
+
+PF.ace<-ace(PF,treePF,type="discrete")
+
+# Get node numbers for each pair of nodes
+
+ace.matrix<-function(tree,x){
+	x.ace<-ace(x,tree,type="discrete")
+	names<-names(x)
+	pairs<-combn(names,2)
+	for(i in 1:length(pairs)/2){
+		pairs[3,]<-getMRCA(,c(pairs[1,],pairs[2,]))
+	}
+	
+
+}

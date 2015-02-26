@@ -345,3 +345,15 @@ return(describeList)
 
 PFdescribes<-multiDescribeMap(PFSimmaps)
 make a new vector with the predicted states for each tip
+
+
+
+
+predictedTipMaker<-function(describeMaps,tips){
+out<-vector(tips)
+for(i in 1:length(describeMaps)){
+out[i]<-describeMaps[[i]]$ace[i]
+	}
+names(out)<-names(tips)	
+return(out)
+}

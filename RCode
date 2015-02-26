@@ -340,6 +340,8 @@ for(i in 1:length(maps)){
 listName<-paste("describe",i,sep="_")
 describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
 	}
+return(describeList)
 }
 
+PFdescribes<-multiDescribeMap(PFSimmaps)
 make a new vector with the predicted states for each tip

@@ -348,9 +348,9 @@ make a new vector with the predicted states for each tip
 
 
 
-
+## as of now this function is functional but does not give the correct values###
 predictedTipMaker<-function(describeMaps,tips){
-out<-vector(tips)
+out<-tips
 for(i in 1:length(describeMaps)){
 out[i]<-describeMaps[[i]]$ace[i]
 	}

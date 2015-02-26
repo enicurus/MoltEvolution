@@ -1,7 +1,7 @@
 #Evolution of molt strategies in birds#
 
 require(phytools)
-
+setwd("~/Desktop/MoltStrategyEvolution")
 #load trees#
 
 genomeTree<-read.nexus("~/Desktop/MoltStrategyEvolution/genome_tree.tre") #load genome tree# 
@@ -317,7 +317,7 @@ StaffelMatrix<-JonSnow(StaffelMatrix)
 SimulMatrix<-JonSnow(SimulMatrix)
 
 
-M#ake 100 Simmaps for each column
+Make 100 Simmaps for each column
 
 
 
@@ -331,4 +331,15 @@ vectorList[[vectorName]]<-make.simmap(tree,x=x,nsim=100)
 	}
 return(vectorList)
 }
+
 PFSimmaps<-multiSimmap(treePF,PFMatrix)
+
+multiDescribeMap<-function(maps){
+describeList<-list()
+for(i in 1:length(maps)){
+listName<-paste("describe",i,sep="_")
+describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
+	}
+}
+
+make a new vector with the predicted states for each tip

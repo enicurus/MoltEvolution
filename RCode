@@ -192,10 +192,10 @@ matrix[[i]][i,]<-rep(0.5,2)
 return(matrix)
 }
 
-PFMatrix<-JonSnow(PFMatrixLists)
-PAMatrix<-JonSnow(PAMatrixLists)
-StaffelMatrix<-JonSnow(StaffelMatrixLists)
-SimulMatrix<-JonSnow(SimulMatrixLists)
+PFMatrixLists<-JonSnow(PFMatrixLists)
+PAMatrixLists<-JonSnow(PAMatrixLists)
+StaffelMatrixLists<-JonSnow(StaffelMatrixLists)
+SimulMatrixLists<-JonSnow(SimulMatrixLists)
 
 
 
@@ -207,13 +207,13 @@ multiSimmap<-function(tree,matrixLists){
 simmapList<-list()
 for(i in 1:length(matrix[,1])){
 simmapName<-paste("simmap",i,sep="_")
-x=matrixLists[i]
+x=matrixLists[[i]]
 simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
 	}
 return(simmapList)
 }
 
- PFMultiSimmap<-multiSimmap(treePF,PFMatrixlists)
+PFMultiSimmap<-multiSimmap(treePF,PFMatrixLists)
 
 PFSimmaps<-multiSimmap(treePF,PFMatrix)
 

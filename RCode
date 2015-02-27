@@ -165,6 +165,7 @@ SimulMatrix<-varMultiplier(Simul)
 
 
 
+
 ###Now I am going to try to compare each lineage to brownian evolution to search for signal of non-neutral process###
 
 #Make a new list of states for each tip in a variable:
@@ -236,7 +237,9 @@ return(simmapList)
 
 PFMultiSimmap<-multiSimmap(treePF,PFMatrixLists)
 
-PFSimmaps<-multiSimmap(treePF,PFMatrix)
+PFMatrixLists<-listMatrixMaker(PFMatrix,PF)
+
+
 
 multiDescribeMap<-function(maps){
 describeList<-list()
@@ -261,7 +264,9 @@ out[i]<-describeMaps[[i]]$tips[i,2]
 out<-matrix(out)
 rownames(out)<-rownames(describeMaps[[1]]$tips)	
 out<-cbind(out,as.numeric(states))
-colnames(out)<-c("expected","observed")
+proportion<-((as.numeric(out[,1])-as.numeric(out[,2])^2)/as.numeric(out[,1]))
+out<-cbind(out,as.numeric(proportion))
+colnames(out)<-c("expected","observed","proportion")
 return(out)
 }
 
@@ -270,4 +275,17 @@ return(out)
 
 predictedTips<-predictedTipMaker(PFdescribes,PF)
 write.csv(predictedTips,file="~/Desktop/MoltStrategyEvolution/predictedPFTips.csv")
+proportion<-as.numeric(predictedTips[,3])
+ hist(proportion,breaks=200)
+ quartz.save(file="~/Desktop/MoltStrategyEvolution/PFproportiondistribution",type="png")
+
+write.table(mydata, "c:/mydata.txt", sep="\t")
+
+
+
+PAMatrix<-varMultiplier(PA)
+PAMatrixLists<-listMatrixMaker(PAMatrix,PA)
+PAMatrixLists<-JonSnow(PAMatrixLists)
+PAMultiSimmap<-multiSimmap(treePA,PAMatrixLists)
+PAdescribes<-multiDescribeMap(PAMultiSimmaps)
 

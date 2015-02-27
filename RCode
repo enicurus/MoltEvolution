@@ -247,17 +247,27 @@ describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
 return(describeList)
 }
 
-PFdescribes<-multiDescribeMap(PFSimmaps)
+PFdescribes<-multiDescribeMap(PFMultiSimmaps)
 
 #make a new vector with the predicted states for each tip
 
 
-predictedTipMaker<-function(describeMaps,tips){
-out<-tips
+predictedTipMaker<-function(describeMaps,states){
+out<-list()
 for(i in 1:length(describeMaps)){
-out[i]<-describeMaps[[i]]$ace[i]
+outnames<-
+out[i]<-describeMaps[[i]]$tips[i,2]
 	}
-names(out)<-names(tips)	
+out<-matrix(out)
+rownames(out)<-rownames(describeMaps[[1]]$tips)	
+out<-cbind(out,as.numeric(states))
+colnames(out)<-c("expected","observed")
 return(out)
 }
+
+
+
+
+predictedTips<-predictedTipMaker(PFdescribes,PF)
+write.csv(predictedTips,file="~/Desktop/MoltStrategyEvolution/predictedPFTips.csv")
 

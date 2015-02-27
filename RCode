@@ -165,6 +165,27 @@ SimulMatrix<-varMultiplier(Simul)
 
 
 
+###Now I am going to try to compare each lineage to brownian evolution to search for signal of non-neutral process###
+
+#Make a new list of states for each tip in a variable:
+
+varMultiplier<-function(states){
+state<-matrix(nrow=length(states),ncol=length(states))
+for (i in 1:length(states))
+state[,i]<-states
+return(state)
+}
+
+# make a character matrix for each variable, with length and width equal to number of tips
+
+PFMatrix<-varMultiplier(PF)
+PAMatrix<-varMultiplier(PA)
+StaffelMatrix<-varMultiplier(Staffel)
+SimulMatrix<-varMultiplier(Simul)
+
+
+
+
 #Make a list of two-columned matrices for each column in the matrix#
 
 listMatrixMaker<-function(matrix,tips){
@@ -199,13 +220,13 @@ SimulMatrixLists<-JonSnow(SimulMatrixLists)
 
 
 
-Make 100 Simmaps for each column
+#Make 100 Simmaps for each column
 
 
 
 multiSimmap<-function(tree,matrixLists){
 simmapList<-list()
-for(i in 1:length(matrix[,1])){
+for(i in 1:length(matrixLists)){
 simmapName<-paste("simmap",i,sep="_")
 x=matrixLists[[i]]
 simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)

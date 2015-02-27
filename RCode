@@ -163,18 +163,6 @@ StaffelMatrix<-varMultiplier(Staffel)
 SimulMatrix<-varMultiplier(Simul)
 
 
-# Remove knowledge of tip state for one tip at a time for the whole matrix
-
-JonSnow<-function(matrix){
-for (i in 1:length(matrix[1,]))
-matrix[i,i]=0.5
-return(matrix)
-}
-
-PFMatrix<-JonSnow(PFMatrix)
-PAMatrix<-JonSnow(PAMatrix)
-StaffelMatrix<-JonSnow(StaffelMatrix)
-SimulMatrix<-JonSnow(SimulMatrix)
 
 
 #Make a list of two-columned matrices for each column in the matrix#
@@ -191,24 +179,41 @@ for(i in 1:length(matrix[1,])){
 return(matrixList)
 }	
 
+PFMatrixLists<-listMatrixMaker(PFMatrix,PF)
+PAMatrixLists<-listMatrixMaker(PAMatrix,PA)
+SimulMatrixLists<-listMatrixMaker(SimulMatrix,Simul)
+StaffelMatrixLists<-listMatrixMaker(StaffelMatrix,Staffel)
 
- PFMatrixLists<-listMatrixMaker(PFMatrix,PF)
+# Remove knowledge of tip state for one tip at a time for the whole matrix
+
+JonSnow<-function(matrix){
+for (i in 1:length(matrix))
+matrix[[i]][i,]<-rep(0.5,2)
+return(matrix)
+}
+
+PFMatrix<-JonSnow(PFMatrixLists)
+PAMatrix<-JonSnow(PAMatrixLists)
+StaffelMatrix<-JonSnow(StaffelMatrixLists)
+SimulMatrix<-JonSnow(SimulMatrixLists)
+
 
 
 Make 100 Simmaps for each column
 
 
 
-multiSimmap<-function(tree,matrix,tips){
-vectorList<-list()
+multiSimmap<-function(tree,matrixLists){
+simmapList<-list()
 for(i in 1:length(matrix[,1])){
-x=as.vector(matrix[,i])
-names(x)<-names(tips)
-vectorName<-paste("vector",i,sep="_")
-vectorList[[vectorName]]<-make.simmap(tree,x=x,nsim=100)
+simmapName<-paste("simmap",i,sep="_")
+x=matrixLists[i]
+simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
 	}
-return(vectorList)
+return(simmapList)
 }
+
+ PFMultiSimmap<-multiSimmap(treePF,PFMatrixlists)
 
 PFSimmaps<-multiSimmap(treePF,PFMatrix)
 

@@ -177,15 +177,33 @@ StaffelMatrix<-JonSnow(StaffelMatrix)
 SimulMatrix<-JonSnow(SimulMatrix)
 
 
+#Make a list of two-columned matrices for each column in the matrix#
+
+listMatrixMaker<-function(matrix,tips){
+matrixList<-list()
+for(i in 1:length(matrix[1,])){
+	matrixName<-paste("matrix",i,sep="_")
+	matrixList[[matrixName]]<-(as.vector(matrix[,i]))
+	names(matrixList[[matrixName]])<-names(tips)
+	matrixList[[matrixName]]<-matrixMaker(matrixList[[matrixName]])
+	
+	}
+return(matrixList)
+}	
+
+
+ PFMatrixLists<-listMatrixMaker(PFMatrix,PF)
+
+
 Make 100 Simmaps for each column
 
 
 
-multiSimmap<-function(tree,matrix,vector){
+multiSimmap<-function(tree,matrix,tips){
 vectorList<-list()
 for(i in 1:length(matrix[,1])){
 x=as.vector(matrix[,i])
-names(x)<-names(vector)
+names(x)<-names(tips)
 vectorName<-paste("vector",i,sep="_")
 vectorList[[vectorName]]<-make.simmap(tree,x=x,nsim=100)
 	}
@@ -204,11 +222,10 @@ return(describeList)
 }
 
 PFdescribes<-multiDescribeMap(PFSimmaps)
-make a new vector with the predicted states for each tip
+
+#make a new vector with the predicted states for each tip
 
 
-
-## as of now this function is functional but does not give the correct values###
 predictedTipMaker<-function(describeMaps,tips){
 out<-tips
 for(i in 1:length(describeMaps)){
@@ -217,3 +234,4 @@ out[i]<-describeMaps[[i]]$ace[i]
 names(out)<-names(tips)	
 return(out)
 }
+

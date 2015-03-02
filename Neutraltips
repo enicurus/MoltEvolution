@@ -1,0 +1,68 @@
+###This is a function that takes a tree and character states and returns expected values for each tip based on a Brownian model###
+##Author: Ryan S. Terrill##
+###Require Liam Revell's phytools package###
+
+neutralTips<-function(tree,states){
+require(phytools)
+	varMultiplier<-function(states){
+		state<-matrix(nrow=length(states),ncol=length(states))
+		for (i in 1:length(states))
+		state[,i]<-states
+		return(state)
+		}
+		matrix<-varMultiplier(states)
+	listMatrixMaker<-function(matrix,states){
+		matrixList<-list()
+		for(i in 1:length(matrix[1,])){
+			matrixName<-paste("matrix",i,sep="_")
+			matrixList[[matrixName]]<-(as.vector(matrix[,i]))
+			names(matrixList[[matrixName]])<-names(states)
+			matrixList[[matrixName]]<-matrixMaker(matrixList[[matrixName]])
+			}
+		return(matrixList)
+		}
+	matrix<-listMatrixMultiplier(matrix)
+	JonSnow<-function(matrix){
+		for (i in 1:length(matrix))
+			matrix[[i]][i,]<-rep(0.5,2)
+		return(matrix)
+		}
+	matrix<-JonSnow(matrix)
+	multiSimmap<-function(tree,matrix){
+		simmapList<-list()
+		for(i in 1:length(matrix)){
+			simmapName<-paste("simmap",i,sep="_")
+			x=matrixLists[[i]]
+			simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
+			cat("Calculating stochastic maps for",i,"of",length(matrix),"trees")
+				}
+		return(simmapList)
+		}	
+	maps<-multiSimmap(tree,matrix)
+	multiDescribeMap<-function(maps){
+		describeList<-list()
+		for(i in 1:length(maps)){
+			listName<-paste("describe",i,sep="_")
+			describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
+			cat("Integrating over 100 maps for",i,"tree out of",length(maps))
+				}
+			return(describeList)
+		}
+	describeMaps<-multiDescribeMap(maps)
+	predictedTipMaker<-function(describeMaps,states){
+		out<-list()
+		for(i in 1:length(describeMaps)){
+			outnames<-
+			out[i]<-describeMaps[[i]]$tips[i,2]
+			}
+		out<-matrix(out)
+		rownames(out)<-rownames(describeMaps[[1]]$tips)	
+		out<-cbind(out,as.numeric(states))
+		proportion<-((as.numeric(out[,1])-as.numeric(out[,2]))/as.numeric(out[,1]))
+		out<-cbind(out,as.numeric(proportion))
+		colnames(out)<-c("expected","observed","proportion")
+		return(out)
+		}
+	outMatrix<-predictedTipMaker(describeMaps,states)
+	return(outMatrix)
+}

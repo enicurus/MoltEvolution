@@ -62,7 +62,7 @@ neutralTips<-function(tree,states){
 		out<-matrix(out)
 		rownames(out)<-rownames(describeMaps[[1]]$tips)	
 		out<-cbind(out,as.numeric(states))
-		proportion<-as.numeric(1-(as.numeric(out[,2])-(as.numeric(out[,1]))))
+		proportion<-as.numeric(1-(abs(as.numeric(out[,2])-(as.numeric(out[,1])))))
 		out<-cbind(out,as.numeric(proportion))
 		colnames(out)<-c("expected","observed","probBrown") 
 		return(out)

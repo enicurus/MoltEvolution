@@ -38,7 +38,7 @@ neutralTips<-function(tree,states){
 			simmapName<-paste("simmap",i,sep="_")
 			x=matrix[[i]]
 			simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
-			cat("Calculating stochastic maps for",i,"of",length(matrix),"trees")
+			cat("Calculating 100 stochastic maps for tree",i,"of",length(matrix),"\n")
 				}
 		return(simmapList)
 		}	
@@ -48,7 +48,7 @@ neutralTips<-function(tree,states){
 		for(i in 1:length(maps)){
 			listName<-paste("describe",i,sep="_")
 			describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
-			cat("Integrating over 100 maps for",i,"tree out of",length(maps))
+			cat("Integrating over 100 maps for tree",i,"out of",length(maps),"\n")
 				}
 			return(describeList)
 		}
@@ -62,11 +62,11 @@ neutralTips<-function(tree,states){
 		out<-matrix(out)
 		rownames(out)<-rownames(describeMaps[[1]]$tips)	
 		out<-cbind(out,as.numeric(states))
-		proportion<-((as.numeric(out[,1])-as.numeric(out[,2]))/as.numeric(out[,1]))
+		proportion<-as.numeric(1-(as.numeric(out[,2])-(as.numeric(out[,1]))))
 		out<-cbind(out,as.numeric(proportion))
-		colnames(out)<-c("expected","observed","proportion")
+		colnames(out)<-c("expected","observed","probBrown") 
 		return(out)
 		}
 	outMatrix<-predictedTipMaker(describeMaps,states)
 	return(outMatrix)
-}	
+}		

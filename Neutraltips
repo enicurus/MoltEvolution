@@ -3,13 +3,18 @@
 ###Require Liam Revell's phytools package###
 
 neutralTips<-function(tree,states){
+	require(phytools)
 	varMultiplier<-function(states){
 		state<-matrix(nrow=length(states),ncol=length(states))
 		for (i in 1:length(states))
 		state[,i]<-states
 		return(state)
 		}
-		matrix<-varMultiplier(states)
+	matrix<-varMultiplier(states)
+	matrixMaker<-function(vector){
+		out<-to.matrix(vector,seq=0:1)
+		return(out)
+		}
 	listMatrixMaker<-function(matrix,states){
 		matrixList<-list()
 		for(i in 1:length(matrix[1,])){
@@ -20,7 +25,7 @@ neutralTips<-function(tree,states){
 			}
 		return(matrixList)
 		}
-	matrix<-listMatrixMaker(matrix)
+	matrix<-listMatrixMaker(matrix,states)
 	JonSnow<-function(matrix){
 		for (i in 1:length(matrix))
 			matrix[[i]][i,]<-rep(0.5,2)
@@ -31,7 +36,7 @@ neutralTips<-function(tree,states){
 		simmapList<-list()
 		for(i in 1:length(matrix)){
 			simmapName<-paste("simmap",i,sep="_")
-			x=matrixLists[[i]]
+			x=matrix[[i]]
 			simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
 			cat("Calculating stochastic maps for",i,"of",length(matrix),"trees")
 				}

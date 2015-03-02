@@ -3,7 +3,6 @@
 ###Require Liam Revell's phytools package###
 
 neutralTips<-function(tree,states){
-require(phytools)
 	varMultiplier<-function(states){
 		state<-matrix(nrow=length(states),ncol=length(states))
 		for (i in 1:length(states))
@@ -21,7 +20,7 @@ require(phytools)
 			}
 		return(matrixList)
 		}
-	matrix<-listMatrixMultiplier(matrix)
+	matrix<-listMatrixMaker(matrix)
 	JonSnow<-function(matrix){
 		for (i in 1:length(matrix))
 			matrix[[i]][i,]<-rep(0.5,2)
@@ -65,4 +64,4 @@ require(phytools)
 		}
 	outMatrix<-predictedTipMaker(describeMaps,states)
 	return(outMatrix)
-}
+}	

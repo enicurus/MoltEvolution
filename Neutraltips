@@ -1,7 +1,3 @@
-###This is a function that takes a tree and character states and returns expected values for each tip based on a Brownian model###
-##Author: Ryan S. Terrill##
-###Require Liam Revell's phytools package###
-
 neutralTips<-function(tree,states){
 	require(phytools)
 	varMultiplier<-function(states){
@@ -35,21 +31,21 @@ neutralTips<-function(tree,states){
 	multiSimmap<-function(tree,matrix){
 		simmapList<-list()
 		for(i in 1:length(matrix)){
+			cat("Calculating 100 stochastic maps for tree",i,"of",length(matrix),"\n")
 			simmapName<-paste("simmap",i,sep="_")
 			x=matrix[[i]]
 			simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
-			cat("Calculating 100 stochastic maps for tree",i,"of",length(matrix),"\n")
-				}
+							}
 		return(simmapList)
 		}	
 	maps<-multiSimmap(tree,matrix)
 	multiDescribeMap<-function(maps){
 		describeList<-list()
 		for(i in 1:length(maps)){
+			cat("Integrating over 100 maps for tree",i,"out of",length(maps),"\n")
 			listName<-paste("describe",i,sep="_")
 			describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
-			cat("Integrating over 100 maps for tree",i,"out of",length(maps),"\n")
-				}
+							}
 			return(describeList)
 		}
 	describeMaps<-multiDescribeMap(maps)
@@ -68,5 +64,6 @@ neutralTips<-function(tree,states){
 		return(out)
 		}
 	outMatrix<-predictedTipMaker(describeMaps,states)
+	print("Time is an illusion. Lunchtime, doubly so"
 	return(outMatrix)
-}		
+}			

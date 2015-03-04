@@ -64,6 +64,6 @@ neutralTips<-function(tree,states){
 		return(out)
 		}
 	outMatrix<-predictedTipMaker(describeMaps,states)
-	print("Time is an illusion. Lunchtime, doubly so"
+	print("Time is an illusion. Lunchtime, doubly so. --Douglas Adams")
 	return(outMatrix)
 }			

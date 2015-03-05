@@ -1,3 +1,11 @@
+###load this function directly into your R session:
+### require (RCurl)
+###> nt<-"https://raw.githubusercontent.com/enicurus/MoltEvolution/master/neutralTips.R"
+### script <- getURL(nt, ssl.verifypeer = FALSE)
+### eval(parse(text = script),envir=.GlobalEnv)
+
+
+
 neutralTips<-function(tree,states){
 	require(phytools)
 	varMultiplier<-function(states){

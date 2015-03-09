@@ -141,7 +141,8 @@ neutralNodes<-function(tree,states){
 		}
 	describeMaps<-multiDescribeMap(maps)
 	return(describeMaps)
-	cat("If you try and take a cat apart to see how it works, the first thing you have on your hands is a nonworking cat. --Douglas Adams")	describeMaps<-multiDescribeMap(maps)
+	cat("If you try and take a cat apart to see how it works, the first thing you have on your hands is a nonworking cat. --Douglas Adams")	
+	describeMaps<-multiDescribeMap(maps)
 	Mapoutput<-function(describeMaps,states,tree){
 		out<-list()
 		outList<-list()

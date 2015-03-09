@@ -41,8 +41,9 @@ neutralTips<-function(tree,states){
 	maps<-multiSimmap(tree,matrix)
 	multiDescribeMap<-function(maps){
 		describeList<-list()
+		cat("Integrating over 100 maps for each tree",length(maps),"\n")
 		for(i in 1:length(maps)){
-			cat("Integrating over 100 maps for tree",i,"out of",length(maps),"\n")
+			cat("=")
 			listName<-paste("describe",i,sep="_")
 			describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
 							}
@@ -52,7 +53,7 @@ neutralTips<-function(tree,states){
 	predictedTipMaker<-function(describeMaps,states){
 		out<-list()
 		for(i in 1:length(describeMaps)){
-			outnames<-
+			outnames<-names(states)
 			out[i]<-describeMaps[[i]]$tips[i,2]
 			}
 		out<-matrix(out)
@@ -64,6 +65,97 @@ neutralTips<-function(tree,states){
 		return(out)
 		}
 	outMatrix<-predictedTipMaker(describeMaps,states)
-	print("Time is an illusion. Lunchtime, doubly so. --Douglas Adams")
+	print("Time is an illusion. Lunchtime, doubly so -- Douglas Adams")
 	return(outMatrix)
-}			
+
+}	
+
+
+
+
+
+neutralNodes<-function(tree,states){
+	require(phytools)
+	require(geiger)
+	varMultiplier<-function(states){
+		state<-matrix(nrow=length(states),ncol=((length(states)*2)-1))
+		for (i in 1:((length(states)*2)-1))
+		state[,i]<-states
+		return(state)
+		}
+	matrix<-varMultiplier(states)
+	matrixMaker<-function(vector){
+		out<-to.matrix(vector,seq=0:1)
+		return(out)
+		}
+	nodeListMatrixMaker<-function(matrix,tips){
+	matrixList<-list()
+ 		for(i in 1:(length(matrix[1,]))){
+			matrixName<-paste("node",i,sep="_")
+ 			matrixList[[matrixName]]<-(as.vector(matrix[,1]))
+ 			names(matrixList[[matrixName]])<-names(tips)
+ 			matrixList[[matrixName]]<-matrixMaker(matrixList[[matrixName]])
+ 	
+ 			}
+ 			return(matrixList)
+ 		 }	
+  	nodeList<-nodeListMatrixMaker(matrix,states)
+	node_forget<-function(tree,matrixLists){
+	require(geiger)
+	tipList<-list()
+	tipNumbers<-list()
+	for (i in 1:(length(matrixLists)-1)){
+		tiplistname<-paste("node",i,sep="_")
+		tipList[[tiplistname]]<-tips(tree,i)
+		names<-as.vector(row.names(matrixLists[[1]]))
+			for (j in 1:length(tipList[[i]])){
+				tipNumbers[[tiplistname]][j]<-which(names==tipList[[i]][j])
+					for(k in tipNumbers[[i]]){
+					matrixLists[[i]][k,]<-rep(0.5,2)
+					}
+				}
+			}
+	return(matrixLists)
+	}
+	matrix<-node_forget(tree,nodeList)
+	multiSimmap<-function(tree,matrix){
+		simmapList<-list()
+		for(i in 1:length(matrix)){
+			cat("Calculating 100 stochastic maps for tree",i,"of",length(matrix),"\n")
+			simmapName<-paste("simmap",i,sep="_")
+			x=matrix[[i]]
+			simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
+							}
+		return(simmapList)
+		}	
+	maps<-multiSimmap(tree,matrix)
+	multiDescribeMap<-function(maps){
+		describeList<-list()
+		cat("Integrating over 100 maps for",length(maps),"trees","\n")
+		for(i in 1:length(maps)){
+			cat("=")
+			listName<-paste("describe",i,sep="_")
+			describeList[[listName]]<-describe.simmap(maps[[i]],plot=FALSE)
+							}
+			return(describeList)
+		}
+	describeMaps<-multiDescribeMap(maps)
+	return(describeMaps)
+	cat("If you try and take a cat apart to see how it works, the first thing you have on your hands is a nonworking cat. --Douglas Adams")	describeMaps<-multiDescribeMap(maps)
+	Mapoutput<-function(describeMaps,states,tree){
+		out<-list()
+		outList<-list()
+		tips<-list()
+		for(i in 1:length(describePFMap)){
+			names<-paste("node",i,sep="_")
+			outList[[names]][1]<-prod(1-(abs(describePFMap[[i]]$tips[,2]-as.numeric(PF))))
+			tips[[names]]<-tips(treePF,i)
+			}
+		out$probs<-outList
+		out$tips<-tips
+		out$sigtips<-tips[outList<=0.05]
+		out$sigs<-outlist[outlist<=0.05]
+		return(out)	
+		}	
+
+}				

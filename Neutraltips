@@ -1,8 +1,51 @@
+
+
+moltOrganizer<-function(hackettTree,matrix){
+	treePF<-hackettTree
+	treePA<-hackettTree
+	treeStaffel<-hackettTree
+	treeSimul<-hackettTree
+	PFmissing<-as.vector(matrix$Species[matrix$PF=="-"])
+	PAmissing<-as.vector(matrix$Species[matrix$PA=="-"])
+	Staffelmissing<-as.vector(matrix$Species[matrix$Staffel=="-"])
+	Simulmissing<-as.vector(matrix$Species[matrix$Simul=="-"])
+	treePF<-drop.tip(treePF,PFmissing)
+	treePA<-drop.tip(treePA,PAmissing)
+	treeStaffel<-drop.tip(treeStaffel,Staffelmissing)
+	treeSimul<-drop.tip(treeSimul,Simulmissing)
+	PF<-(matrix$PF)
+	PF<-as.vector(PF)
+	names(PF)<-matrix$Species
+	PF<-(PF[PF!="-"])
+	PA<-(matrix$PA)
+	PA<-as.vector(PA)
+	names(PA)<-matrix$Species
+	PA<-(PA[PA!="-"])
+	Staffel<-(matrix$Staffel)
+	Staffel<-as.vector(Staffel)
+	names(Staffel)<-matrix$Species
+	Staffel<-(Staffel[Staffel!="-"])
+	Simul<-(matrix$Simul)
+	Simul<-as.vector(Simul)
+	names(Simul)<-matrix$Species
+	Simul<-(Simul[Simul!="-"])
+	out<-list()
+	out$PF<-PF
+	out$treePF<-treePF
+	out$PA<-PA
+	out$treePA<-treePA
+	out$Staffel<-Staffel
+	out$treeStaffel<-treeStaffel
+	out$Simul<-Simul
+	out$treeSimul<-treeSimul
+	return(out)
+	}
+
 neutralTips<-function(tree,states){
 	require(phytools)
 	varMultiplier<-function(states){
-		state<-matrix(nrow=length(states),ncol=length(states))
-		for (i in 1:length(states))
+		state<-matrix(nrow=length(states),ncol=((length(states))*2)-1)
+		for (i in 1:(length(states)*2)-1)
 		state[,i]<-states
 		return(state)
 		}
@@ -124,7 +167,7 @@ neutralNodes<-function(tree,states){
 			cat("Calculating 100 stochastic maps for tree",i,"of",length(matrix),"\n")
 			simmapName<-paste("simmap",i,sep="_")
 			x=matrix[[i]]
-			simmapList[[simmapName]]<-make.simmap(tree,x,nsim=100)
+			simmapList[[simmapName]]<-make.simmap(tree,matrix[[i]],nsim=100)
 							}
 		return(simmapList)
 		}	
@@ -140,23 +183,30 @@ neutralNodes<-function(tree,states){
 			return(describeList)
 		}
 	describeMaps<-multiDescribeMap(maps)
-	return(describeMaps)
-	cat("If you try and take a cat apart to see how it works, the first thing you have on your hands is a nonworking cat. --Douglas Adams")	
-	describeMaps<-multiDescribeMap(maps)
 	Mapoutput<-function(describeMaps,states,tree){
 		out<-list()
 		outList<-list()
 		tips<-list()
-		for(i in 1:length(describePFMap)){
-			names<-paste("node",i,sep="_")
-			outList[[names]][1]<-prod(1-(abs(describePFMap[[i]]$tips[,2]-as.numeric(PF))))
-			tips[[names]]<-tips(treePF,i)
+		stateSimmap<-make.simmap(tree,states,nsim=100)
+		stateDescribeMap<-describe.simmap(stateSimmap)
+		for(j in 1:length(states)){
+			tipnames<-names(states)[j]
+			outList[[tipnames]]<-(1-(abs(states[j]-describeMaps[[j]]$tips[j,2])))
+			}
+		for(i in length(states):length(describeMaps)){
+			nodenames<-paste("node",i,sep="_")
+			outList[[nodenames]]<-(1-(abs(describeMaps[[i]]$ace[i,2]-stateDescribeMap$ace[i,2])))
+			tips[[nodenames]]<-tips(treePF,i)
 			}
 		out$probs<-outList
 		out$tips<-tips
 		out$sigtips<-tips[outList<=0.05]
 		out$sigs<-outlist[outlist<=0.05]
+		cat("If you try and take a cat apart to see how it works, the first thing you have on your hands is a nonworking cat. --Douglas Adams")
 		return(out)	
-		}	
+		}
+	done<-Mapoutput(describeMaps,states,tree)		
+	return(done)	
 
-}				
+}	
+			
